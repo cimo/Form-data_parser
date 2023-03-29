@@ -7,7 +7,7 @@ Parser for the form-data request.
 1. How to use:
 
 ```
-import * as FormDataParser from "form-data_parser";
+import * as FormDataParser from "@cimo/form-data_parser";
 
 export const execute = (request: Express.Request): void => {
     const chunkList: Buffer[] = [];
