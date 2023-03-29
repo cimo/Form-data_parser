@@ -1,6 +1,6 @@
 {
     "name": "@cimo/form-data_parser",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Parse for the form-data request.",
     "author": "cimo",
     "license": "MIT",
