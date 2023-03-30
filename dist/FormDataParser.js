@@ -14,21 +14,18 @@ const processData = (header) => {
     const result = {};
     const contentDispositionSplit = header.contentDisposition.split(";");
     if (contentDispositionSplit) {
-        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "") : "";
+        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "").trim() : "";
         const buffer = Buffer.from(header.byteList);
-        const filename = contentDispositionSplit[2];
+        const filename = contentDispositionSplit[2] ? contentDispositionSplit[2].split("=")[1].trim() : "";
         createObject(result, "name", name);
         createObject(result, "buffer", buffer);
         if (filename) {
-            const filenameSplit = filename.split("=");
-            if (filenameSplit[0] && filenameSplit[1]) {
-                const label = filenameSplit[0].trim();
-                const value = filenameSplit[1].trim();
-                const byteList = JSON.parse(value);
-                createObject(result, label, byteList);
-            }
+            const byteList = JSON.parse(filename);
+            createObject(result, "filename", byteList);
             const mimeType = header.contentType.split(":")[1] ? header.contentType.split(":")[1].trim() : "";
             createObject(result, "mimeType", mimeType);
+            const size = Buffer.byteLength(buffer);
+            createObject(result, "size", size);
         }
     }
     return result;

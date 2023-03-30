@@ -1,6 +1,6 @@
 import { IreadState, Iheader, Iinput } from "./FormDataParserInterface";
 
-const createObject = (input: Iinput, label: string, value: Buffer | Record<string, number> | string): void => {
+const createObject = (input: Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
     Object.defineProperty(input, label, {
         value: value,
         writable: true,
@@ -15,28 +15,23 @@ const processData = (header: Iheader): Iinput => {
     const contentDispositionSplit = header.contentDisposition.split(";");
 
     if (contentDispositionSplit) {
-        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "") : "";
+        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "").trim() : "";
         const buffer = Buffer.from(header.byteList);
-        const filename = contentDispositionSplit[2];
+        const filename = contentDispositionSplit[2] ? contentDispositionSplit[2].split("=")[1].trim() : "";
 
         createObject(result, "name", name);
 
         createObject(result, "buffer", buffer);
 
         if (filename) {
-            const filenameSplit = filename.split("=");
-
-            if (filenameSplit[0] && filenameSplit[1]) {
-                const label = filenameSplit[0].trim();
-                const value = filenameSplit[1].trim();
-                const byteList = JSON.parse(value) as Record<string, number>;
-
-                createObject(result, label, byteList);
-            }
+            const byteList = JSON.parse(filename) as Record<string, number>;
+            createObject(result, "filename", byteList);
 
             const mimeType = header.contentType.split(":")[1] ? header.contentType.split(":")[1].trim() : "";
-
             createObject(result, "mimeType", mimeType);
+
+            const size = Buffer.byteLength(buffer);
+            createObject(result, "size", size);
         }
     }
 

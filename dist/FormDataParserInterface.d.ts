@@ -15,4 +15,5 @@ export interface Iinput {
     buffer: Buffer;
     filename: string;
     mimeType: string;
+    size: string;
 }
