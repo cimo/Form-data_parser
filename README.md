@@ -6,25 +6,77 @@ Parser for the form-data request.
 
 1. How to use:
 
+-   Server.ts
+
 ```
-import * as FormDataParser from "@cimo/form-data_parser";
+...
 
-export const execute = (request: Express.Request): void => {
-    const chunkList: Buffer[] = [];
+server.listen(ControllerHelper.SERVER_PORT, () => {
+    ...
 
-    request.on("data", (data: Buffer) => {
-        chunkList.push(data);
-    });
+    ControllerTest.execute(app);
+});
 
-    request.on("end", () => {
-        const buffer = Buffer.concat(chunkList);
-        const formDataList = FormDataParser.readInput(buffer, request.headers["content-type"]);
+...
+```
 
-        for (const value of formDataList) {
-            if (value.name === "file" && value.filename && value.buffer) {
-                ...
-            }
-        }
+-   ControllerTest.ts
+
+```
+...
+
+import * as ControllerUpload from "../Controller/Upload";
+
+export const execute = (app: Express.Express): void => {
+    app.post("/uploadFile", (request: Express.Request, response: Express.Response) => {
+        void (async () => {
+            await ControllerUpload.execute(request)
+                .then((result) => {
+                    response.status(200).send({ Response: `${result.filename} - ${result.buffer}` });
+                })
+                .catch(() => {
+                    response.status(500).send({ Error: "Upload failed." });
+                });
+        })();
     });
 };
+
+...
+```
+
+-   ControllerUpload.ts
+
+```
+...
+
+import * as FormDataParser from "@cimo/form-data_parser";
+
+export const execute = (request: Express.Request): Promise<Record<string, string>> => {
+    return new Promise((resolve, reject) => {
+        const chunkList: Buffer[] = [];
+
+        request.on("data", (data: Buffer) => {
+            chunkList.push(data);
+        });
+
+        request.on("end", () => {
+            const buffer = Buffer.concat(chunkList);
+            const formDataList = FormDataParser.readInput(buffer, request.headers["content-type"]);
+
+            for (const value of formDataList) {
+                if (value.name === "file" && value.filename && value.buffer) {
+                    resolve({ filename: value.filename, buffer: value.buffer });
+
+                    break;
+                }
+            }
+        });
+
+        request.on("error", (error: Error) => {
+            reject(error);
+        });
+    });
+};
+
+...
 ```

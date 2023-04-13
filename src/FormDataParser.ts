@@ -98,7 +98,11 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
                     const difference = byteList.length - line.length;
                     const byteListSlice = byteList.slice(0, difference - 1);
 
-                    const input = processData({ contentDisposition: headerContentDisposition, contentType: headerContentType, byteList: byteListSlice });
+                    const input = processData({
+                        contentDisposition: headerContentDisposition,
+                        contentType: headerContentType,
+                        byteList: byteListSlice
+                    });
 
                     resultList.push(input);
 
