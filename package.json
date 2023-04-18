@@ -20,11 +20,11 @@
         "tslib": "2.5.0",
         "eslint": "8.35.0",
         "prettier": "2.8.7",
-        "@types/node": "18.14.4",
-        "@typescript-eslint/eslint-plugin": "5.54.0",
-        "@typescript-eslint/parser": "5.54.0",
         "eslint-plugin-prettier": "4.2.1",
-        "eslint-config-prettier": "8.8.0"
+        "eslint-config-prettier": "8.8.0",
+        "@types/node": "18.14.4",
+        "@typescript-eslint/parser": "5.54.0",
+        "@typescript-eslint/eslint-plugin": "5.54.0"
     },
     "resolutions": {
         "node-fetch": "2.6.7",
