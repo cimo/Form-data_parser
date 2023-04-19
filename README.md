@@ -4,7 +4,9 @@ Parser for the form-data request.
 
 ## Setup
 
-1. How to use:
+1. Link for npm package -> https://www.npmjs.com/package/@cimo/form-data_parser
+
+2. Example for use it with "NodeJs Express":
 
 -   Server.ts
 
