@@ -10,7 +10,7 @@
     },
     "main": "./dist/index.js",
     "scripts": {
-        "preinstall": "npm install --package-lock-only --ignore-scripts --no-audit && npx npm-force-resolutions@0.0.3",
+        "preinstall": "npm install --package-lock-only --ignore-scripts --no-audit && npx --yes npm-force-resolutions@0.0.3",
         "check": "eslint . --fix",
         "build": "npm run check && tsc --build -clean && tsc --build"
     },
