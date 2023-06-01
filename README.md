@@ -7,7 +7,6 @@ Parser for the form-data request.
 1. Write on terminal:
 
 ```
-npm login --auth-type=legacy
 npm publish --auth-type=legacy --access public
 ```
 
