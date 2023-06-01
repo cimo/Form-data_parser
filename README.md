@@ -2,6 +2,15 @@
 
 Parser for the form-data request.
 
+## Publish on npm
+
+1. Write on terminal:
+
+```
+npm login --auth-type=legacy
+npm publish --auth-type=legacy --access public
+```
+
 ## Setup
 
 1. Link for npm package -> https://www.npmjs.com/package/@cimo/form-data_parser
