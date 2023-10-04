@@ -50,6 +50,8 @@ export const api = (app: Express.Express): void => {
                     for (const value of resultList) {
                         if (value.name === "file" && value.filename) {
                             fileName = value.filename;
+
+                            break;
                         }
                     }
 
@@ -70,9 +72,9 @@ export const api = (app: Express.Express): void => {
 ```
 ...
 
-import * as FormDataParser from "@cimo/form-data_parser";
+import { FormDataParser, FormDataParserInterface } from "@cimo/form-data_parser";
 
-export const execute = (request: Express.Request, fileExists: boolean): Promise<FormDataParser.Iinput[]> => {
+export const execute = (request: Express.Request, fileExists: boolean): Promise<FormDataParserInterface.Iinput[]> => {
     return new Promise((resolve, reject) => {
         const chunkList: Buffer[] = [];
 
