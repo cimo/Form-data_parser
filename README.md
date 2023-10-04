@@ -2,29 +2,32 @@
 
 Parser for the form-data request.
 
-## Publish on npm
+## Publish
 
-1. Write on terminal:
+1. npm run build
+2. npm login --auth-type=legacy
+3. npm publish --auth-type=legacy --access public
 
-```
-npm publish --auth-type=legacy --access public
-```
+## Installation
 
-## Setup
+1. Link for npm package -> https://www.npmjs.com/package/@cimo/websocket
 
-1. Link for npm package -> https://www.npmjs.com/package/@cimo/form-data_parser
-
-2. Example for use it with "NodeJs Express":
+## Server - Example with "NodeJs Express"
 
 -   Server.ts
 
 ```
 ...
 
-server.listen(ControllerHelper.SERVER_PORT, () => {
+import * as ControllerTest from "../Controller/Test";
+
+...
+
+server.listen(8080, () => {
+
     ...
 
-    ControllerTest.execute(app);
+    ControllerTest.api(app);
 });
 
 ...
@@ -37,14 +40,22 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
 
 import * as ControllerUpload from "../Controller/Upload";
 
-export const execute = (app: Express.Express): void => {
-    app.post("/uploadFile", (request: Express.Request, response: Express.Response) => {
+export const api = (app: Express.Express): void => {
+    app.post("/upload", (request: Express.Request, response: Express.Response) => {
         void (async () => {
-            await ControllerUpload.execute(request)
-                .then((result) => {
-                    response.status(200).send({ Response: `${result.filename} - ${result.buffer}` });
+            await ControllerUpload.execute(request, false)
+                .then((resultList) => {
+                    let fileName = "";
+
+                    for (const value of resultList) {
+                        if (value.name === "file" && value.filename) {
+                            fileName = value.filename;
+                        }
+                    }
+
+                    response.status(200).send({ fileName: `${fileName}` });
                 })
-                .catch(() => {
+                .catch((error: Error) => {
                     response.status(500).send({ Error: "Upload failed." });
                 });
         })();
@@ -61,7 +72,7 @@ export const execute = (app: Express.Express): void => {
 
 import * as FormDataParser from "@cimo/form-data_parser";
 
-export const execute = (request: Express.Request): Promise<Record<string, string>> => {
+export const execute = (request: Express.Request, fileExists: boolean): Promise<FormDataParser.Iinput[]> => {
     return new Promise((resolve, reject) => {
         const chunkList: Buffer[] = [];
 
@@ -75,9 +86,17 @@ export const execute = (request: Express.Request): Promise<Record<string, string
 
             for (const value of formDataList) {
                 if (value.name === "file" && value.filename && value.buffer) {
-                    resolve({ filename: value.filename, buffer: value.buffer });
+                    const input = `/home/root/file/input/${value.filename}`;
 
-                    break;
+                    if (fileExists && Fs.existsSync(input)) {
+                        reject("Upload.ts - execute() - request.on('end' - reject error: File exists.");
+
+                        break;
+                    } else {
+                        resolve(formDataList);
+
+                        break;
+                    }
                 }
             }
         });

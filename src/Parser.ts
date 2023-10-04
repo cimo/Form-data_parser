@@ -1,42 +1,4 @@
-import { IreadState, Iheader, Iinput } from "./FormDataParserInterface";
-
-const createObject = (input: Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
-    Object.defineProperty(input, label, {
-        value: value,
-        writable: true,
-        enumerable: true,
-        configurable: true
-    });
-};
-
-const processData = (header: Iheader): Iinput => {
-    const result = {} as Iinput;
-
-    const contentDispositionSplit = header.contentDisposition.split(";");
-
-    if (contentDispositionSplit) {
-        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "").trim() : "";
-        const buffer = Buffer.from(header.byteList);
-        const filename = contentDispositionSplit[2] ? contentDispositionSplit[2].split("=")[1].trim() : "";
-
-        createObject(result, "name", name);
-
-        createObject(result, "buffer", buffer);
-
-        if (filename) {
-            const byteList = JSON.parse(filename) as Record<string, number>;
-            createObject(result, "filename", byteList);
-
-            const mimeType = header.contentType.split(":")[1] ? header.contentType.split(":")[1].trim() : "";
-            createObject(result, "mimeType", mimeType);
-
-            const size = Buffer.byteLength(buffer);
-            createObject(result, "size", size);
-        }
-    }
-
-    return result;
-};
+import { IreadState, Iheader, Iinput } from "./Interface";
 
 export const readInput = (buffer: Buffer, contentType: string | undefined): Iinput[] => {
     const resultList: Iinput[] = [];
@@ -54,8 +16,6 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
         for (let a = 0; a < buffer.length; a++) {
             const byte = buffer[a];
             const prevByte = a > 0 ? buffer[a - 1] : null;
-            // 0x0a - LF => \n
-            // 0x0d - CR => \r
             const characterNewLine = byte === 0x0a || byte === 0x0d;
             const characterReturn = byte === 0x0a && prevByte === 0x0d;
 
@@ -126,3 +86,48 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
 
     return resultList;
 };
+
+const createObject = (input: Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
+    Object.defineProperty(input, label, {
+        value: value,
+        writable: true,
+        enumerable: true,
+        configurable: true
+    });
+};
+
+const processData = (header: Iheader): Iinput => {
+    const result = {} as Iinput;
+
+    const contentDispositionSplit = header.contentDisposition.split(";");
+
+    if (contentDispositionSplit) {
+        const name = contentDispositionSplit[1] ? contentDispositionSplit[1].split("=")[1].replace(/"/g, "").trim() : "";
+        const buffer = Buffer.from(header.byteList);
+        const filename = contentDispositionSplit[2] ? contentDispositionSplit[2].split("=")[1].trim() : "";
+
+        createObject(result, "name", name);
+
+        createObject(result, "buffer", buffer);
+
+        if (filename) {
+            const byteList = JSON.parse(filename) as Record<string, number>;
+            createObject(result, "filename", byteList);
+
+            const mimeType = header.contentType.split(":")[1] ? header.contentType.split(":")[1].trim() : "";
+            createObject(result, "mimeType", mimeType);
+
+            const size = Buffer.byteLength(buffer);
+            createObject(result, "size", size);
+        }
+    }
+
+    return result;
+};
+
+for (const event of ["uncaughtException", "unhandledRejection"]) {
+    process.on(event, (error: Error) => {
+        // eslint-disable-next-line no-console
+        console.log("@cimo/websocket - Helper.ts - keepProcess()", `Event: ${event} - Error: ${error.stack?.toString() || error.toString()}`);
+    });
+}

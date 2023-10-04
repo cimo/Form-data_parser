@@ -4,6 +4,8 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
     "eslint.format.enable": true,
     "javascript.validate.enable": false,
     "docker.commands.attach": "${containerCommand} exec -it ${containerId} bash",
