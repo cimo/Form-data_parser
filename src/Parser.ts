@@ -124,10 +124,3 @@ const processData = (header: Iheader): Iinput => {
 
     return result;
 };
-
-for (const event of ["uncaughtException", "unhandledRejection"]) {
-    process.on(event, (error: Error) => {
-        // eslint-disable-next-line no-console
-        console.log("@cimo/websocket - Helper.ts - keepProcess()", `Event: ${event} - Error: ${error.stack?.toString() || error.toString()}`);
-    });
-}
