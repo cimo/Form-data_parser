@@ -1,7 +1,7 @@
 {
     "name": "@cimo/form-data_parser",
-    "version": "1.1.10",
-    "description": "Parse for the form-data request.",
+    "version": "1.1.11",
+    "description": "Parser for the form-data request. Light, fast and secure.",
     "author": "cimo",
     "license": "MIT",
     "repository": {
@@ -11,8 +11,8 @@
     "scripts": {
         "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
         "check": "eslint . --fix",
-        "remove_dist": "node -e \"const fs = require('fs');try {fs.rmdirSync('./dist/',{recursive: true})} catch{};process.exit(0);\"",
-        "build": "npm run check && npm run remove_dist && tsc --build && tsc --build tsconfig.build.json",
+        "remove_dist": "node -e \"const fs = require('fs'); try{ fs.rmdirSync('./dist/', { recursive: true }) } catch{}; process.exit(0);\"",
+        "build": "npm run check && npm run remove_dist && tsc --build tsconfig.build.json",
         "pack": "npm run build && npm pack"
     },
     "dependencies": {},

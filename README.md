@@ -1,6 +1,6 @@
 # Form-data_parser
 
-Parser for the form-data request.
+Parser for the form-data request. Light, fast and secure.
 
 ## Publish
 
@@ -10,7 +10,7 @@ Parser for the form-data request.
 
 ## Installation
 
-1. Link for npm package -> https://www.npmjs.com/package/@cimo/websocket
+1. Link for npm package -> https://www.npmjs.com/package/@cimo/form-data_parser
 
 ## Server - Example with "NodeJs Express"
 
@@ -72,9 +72,9 @@ export const api = (app: Express.Express): void => {
 ```
 ...
 
-import { FormDataParser, FormDataParserInterface } from "@cimo/form-data_parser";
+import { Cfdp, CfdpInterface } from "@cimo/form-data_parser";
 
-export const execute = (request: Express.Request, fileExists: boolean): Promise<FormDataParserInterface.Iinput[]> => {
+export const execute = (request: Express.Request, fileExists: boolean): Promise<CfdpInterface.Iinput[]> => {
     return new Promise((resolve, reject) => {
         const chunkList: Buffer[] = [];
 
@@ -84,14 +84,14 @@ export const execute = (request: Express.Request, fileExists: boolean): Promise<
 
         request.on("end", () => {
             const buffer = Buffer.concat(chunkList);
-            const formDataList = FormDataParser.readInput(buffer, request.headers["content-type"]);
+            const formDataList = Cfdp.readInput(buffer, request.headers["content-type"]);
 
             for (const value of formDataList) {
                 if (value.name === "file" && value.filename && value.buffer) {
                     const input = `/home/root/file/input/${value.filename}`;
 
                     if (fileExists && Fs.existsSync(input)) {
-                        reject("Upload.ts - execute() - request.on('end' - reject error: File exists.");
+                        reject("File exists.");
 
                         break;
                     } else {

@@ -1,2 +1,2 @@
-export * as FormDataParserInterface from "./Interface";
-export * as FormDataParser from "./Parser";
+export * as CfdpInterface from "./Interface";
+export * as Cfdp from "./Parser";
