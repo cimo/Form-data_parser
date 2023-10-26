@@ -58,7 +58,7 @@ export const api = (app: Express.Express): void => {
                     response.status(200).send({ fileName: `${fileName}` });
                 })
                 .catch((error: Error) => {
-                    response.status(500).send({ Error: "Upload failed." });
+                    response.status(200).send({ Error: "Upload failed." });
                 });
         })();
     });
@@ -95,6 +95,8 @@ export const execute = (request: Express.Request, fileExists: boolean): Promise<
 
                         break;
                     } else {
+                        // Write the file "value.buffer"
+
                         resolve(formDataList);
 
                         break;

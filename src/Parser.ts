@@ -1,13 +1,14 @@
-import { IreadState, Iheader, Iinput } from "./Interface";
+// Source
+import * as Interface from "./Interface";
 
-export const readInput = (buffer: Buffer, contentType: string | undefined): Iinput[] => {
-    const resultList: Iinput[] = [];
+export const readInput = (buffer: Buffer, contentType: string | undefined): Interface.Iinput[] => {
+    const resultList: Interface.Iinput[] = [];
 
     if (contentType) {
         const boundary = contentType.replace("multipart/form-data; boundary=", "");
 
         let line = "";
-        let readState = IreadState.INIT;
+        let readState = Interface.EreadState.INIT;
         let headerInputList: string[] = [];
         let headerContentDisposition = "";
         let headerContentType = "";
@@ -23,17 +24,17 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
                 line += String.fromCharCode(byte);
             }
 
-            if (characterReturn && readState === IreadState.INIT) {
+            if (characterReturn && readState === Interface.EreadState.INIT) {
                 if (line == "--" + boundary) {
-                    readState = IreadState.HEADER;
+                    readState = Interface.EreadState.HEADER;
                 }
 
                 line = "";
-            } else if (characterReturn && readState === IreadState.HEADER) {
+            } else if (characterReturn && readState === Interface.EreadState.HEADER) {
                 if (line.length) {
                     headerInputList.push(line);
                 } else {
-                    readState = IreadState.DATA;
+                    readState = Interface.EreadState.DATA;
 
                     for (const b of headerInputList) {
                         if (b.toLowerCase().startsWith("content-disposition:")) {
@@ -47,13 +48,13 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
                 }
 
                 line = "";
-            } else if (readState === IreadState.DATA) {
+            } else if (readState === Interface.EreadState.DATA) {
                 if (line.length > boundary.length + 4) {
                     line = "";
                 }
 
                 if (line === "--" + boundary) {
-                    readState = IreadState.SEPARATOR;
+                    readState = Interface.EreadState.SEPARATOR;
 
                     const difference = byteList.length - line.length;
                     const byteListSlice = byteList.slice(0, difference - 1);
@@ -78,8 +79,8 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
                 if (characterReturn) {
                     line = "";
                 }
-            } else if (characterReturn && readState === IreadState.SEPARATOR) {
-                readState = IreadState.HEADER;
+            } else if (characterReturn && readState === Interface.EreadState.SEPARATOR) {
+                readState = Interface.EreadState.HEADER;
             }
         }
     }
@@ -87,7 +88,7 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Iinp
     return resultList;
 };
 
-const createObject = (input: Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
+const createObject = (input: Interface.Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
     Object.defineProperty(input, label, {
         value: value,
         writable: true,
@@ -96,8 +97,8 @@ const createObject = (input: Iinput, label: string, value: Buffer | Record<strin
     });
 };
 
-const processData = (header: Iheader): Iinput => {
-    const result = {} as Iinput;
+const processData = (header: Interface.Iheader): Interface.Iinput => {
+    const result = {} as Interface.Iinput;
 
     const contentDispositionSplit = header.contentDisposition.split(";");
 

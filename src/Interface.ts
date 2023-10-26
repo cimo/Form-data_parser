@@ -1,4 +1,4 @@
-export enum IreadState {
+export enum EreadState {
     INIT,
     HEADER,
     DATA,
