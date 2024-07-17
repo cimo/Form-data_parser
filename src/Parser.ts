@@ -1,14 +1,14 @@
 // Source
-import * as Interface from "./Interface";
+import * as Model from "./Model";
 
-export const readInput = (buffer: Buffer, contentType: string | undefined): Interface.Iinput[] => {
-    const resultList: Interface.Iinput[] = [];
+export const readInput = (buffer: Buffer, contentType: string | undefined): Model.Iinput[] => {
+    const resultList: Model.Iinput[] = [];
 
     if (contentType) {
         const boundary = contentType.replace("multipart/form-data; boundary=", "");
 
         let line = "";
-        let readState = Interface.EreadState.INIT;
+        let readState = Model.EreadState.INIT;
         let headerInputList: string[] = [];
         let headerContentDisposition = "";
         let headerContentType = "";
@@ -24,17 +24,17 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Inte
                 line += String.fromCharCode(byte);
             }
 
-            if (characterReturn && readState === Interface.EreadState.INIT) {
+            if (characterReturn && readState === Model.EreadState.INIT) {
                 if (line == "--" + boundary) {
-                    readState = Interface.EreadState.HEADER;
+                    readState = Model.EreadState.HEADER;
                 }
 
                 line = "";
-            } else if (characterReturn && readState === Interface.EreadState.HEADER) {
+            } else if (characterReturn && readState === Model.EreadState.HEADER) {
                 if (line.length) {
                     headerInputList.push(line);
                 } else {
-                    readState = Interface.EreadState.DATA;
+                    readState = Model.EreadState.DATA;
 
                     for (const b of headerInputList) {
                         if (b.toLowerCase().startsWith("content-disposition:")) {
@@ -48,13 +48,13 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Inte
                 }
 
                 line = "";
-            } else if (readState === Interface.EreadState.DATA) {
+            } else if (readState === Model.EreadState.DATA) {
                 if (line.length > boundary.length + 4) {
                     line = "";
                 }
 
                 if (line === "--" + boundary) {
-                    readState = Interface.EreadState.SEPARATOR;
+                    readState = Model.EreadState.SEPARATOR;
 
                     const difference = byteList.length - line.length;
                     const byteListSlice = byteList.slice(0, difference - 1);
@@ -79,8 +79,8 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Inte
                 if (characterReturn) {
                     line = "";
                 }
-            } else if (characterReturn && readState === Interface.EreadState.SEPARATOR) {
-                readState = Interface.EreadState.HEADER;
+            } else if (characterReturn && readState === Model.EreadState.SEPARATOR) {
+                readState = Model.EreadState.HEADER;
             }
         }
     }
@@ -88,7 +88,7 @@ export const readInput = (buffer: Buffer, contentType: string | undefined): Inte
     return resultList;
 };
 
-const createObject = (input: Interface.Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
+const createObject = (input: Model.Iinput, label: string, value: Buffer | Record<string, number> | string | number): void => {
     Object.defineProperty(input, label, {
         value: value,
         writable: true,
@@ -97,8 +97,8 @@ const createObject = (input: Interface.Iinput, label: string, value: Buffer | Re
     });
 };
 
-const processData = (header: Interface.Iheader): Interface.Iinput => {
-    const result = {} as Interface.Iinput;
+const processData = (header: Model.Iheader): Model.Iinput => {
+    const result = {} as Model.Iinput;
 
     const contentDispositionSplit = header.contentDisposition.split(";");
 

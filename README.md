@@ -3,6 +3,12 @@
 Parser for the form-data request. Light, fast and secure.
 Write with native Typescript code and no dependencies is used.
 
+## Pack
+
+1. npm run pack
+2. Copy the file "package_name-x.x.x.tgz" in the project root folder.
+3. In the "package.json" file insert: "@cimo/package_name": "file:package_name-x.x.x.tgz"
+
 ## Publish
 
 1. npm run build
@@ -45,12 +51,12 @@ export const api = (app: Express.Express): void => {
     app.post("/upload", (request: Express.Request, response: Express.Response) => {
         void (async () => {
             await ControllerUpload.execute(request, false)
-                .then((resultList) => {
+                .then((resultControllerUploadList) => {
                     let fileName = "";
 
-                    for (const value of resultList) {
-                        if (value.name === "file" && value.filename) {
-                            fileName = value.filename;
+                    for (const resultControllerUpload of resultControllerUploadList) {
+                        if (resultControllerUpload.name === "file" && resultControllerUpload.filename) {
+                            fileName = resultControllerUpload.filename;
 
                             break;
                         }
@@ -73,9 +79,9 @@ export const api = (app: Express.Express): void => {
 ```
 ...
 
-import { Cfdp, CfdpInterface } from "@cimo/form-data_parser";
+import { Cfdp, CfdpModel } from "@cimo/form-data_parser";
 
-export const execute = (request: Express.Request, fileExists: boolean): Promise<CfdpInterface.Iinput[]> => {
+export const execute = (request: Express.Request, isFileExists: boolean): Promise<CfdpModel.Iinput[]> => {
     return new Promise((resolve, reject) => {
         const chunkList: Buffer[] = [];
 
@@ -87,21 +93,19 @@ export const execute = (request: Express.Request, fileExists: boolean): Promise<
             const buffer = Buffer.concat(chunkList);
             const formDataList = Cfdp.readInput(buffer, request.headers["content-type"]);
 
-            for (const value of formDataList) {
-                if (value.name === "file" && value.filename && value.buffer) {
-                    const input = `/home/root/file/input/${value.filename}`;
+            for (const formData of formDataList) {
+                if (formData.name === "file" && formData.filename && formData.buffer) {
+                    const input = `/home/root/file/input/${formData.filename}`;
 
-                    if (fileExists && Fs.existsSync(input)) {
+                    if (isFileExists && Fs.existsSync(input)) {
                         reject("File exists.");
-
-                        break;
                     } else {
-                        // Write the file "value.buffer"
+                        // Write the file "formData.buffer"
 
                         resolve(formDataList);
-
-                        break;
                     }
+
+                    break;
                 }
             }
         });
