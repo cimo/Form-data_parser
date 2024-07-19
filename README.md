@@ -1,7 +1,7 @@
 # Form-data_parser
 
 Parser for the form-data request. Light, fast and secure.
-Write with native Typescript code and no dependencies is used.
+Writed with native Typescript code and no dependencies are used.
 
 ## Pack
 
