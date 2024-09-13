@@ -9,8 +9,8 @@
         "url": "https://github.com/cimo/Form-data_parser.git"
     },
     "scripts": {
-        "check": "eslint --fix",
         "remove_dist": "node -e \"const fs = require('fs'); try{ fs.rmdirSync('./dist/', { recursive: true }) } catch{}; process.exit(0);\"",
+        "check": "eslint --fix",
         "build": "npm run remove_dist && npm run check && tsc --build tsconfig.build.json",
         "pack": "npm run build && npm pack"
     },
